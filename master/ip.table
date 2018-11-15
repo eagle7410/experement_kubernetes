@@ -1,0 +1,8 @@
+192.168.0.101 - master1
+192.168.0.103 - master2
+
+
+# join to master2
+#    kubeadm join 192.168.0.103:6443 --token 8i6par.mlfuaepf14mr7brv --discovery-token-ca-cert-hash sha256:f01e00d64838d44d54a1729893439e11ee30037526e6463173f5558d0d439c64
+join to master1
+    kubeadm join 192.168.0.101:6443 --token 53kdte.b7hfztigtyi59wze --discovery-token-ca-cert-hash sha256:72ee258b3cf9cbf13fe6f0943c813a135527173ff84e62061101ed23890ba2ae

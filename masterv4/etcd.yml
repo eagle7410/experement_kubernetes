@@ -1,0 +1,130 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: etcd-client
+spec:
+  ports:
+  - name: etcd-client-port
+    port: 2379
+    protocol: TCP
+    targetPort: 2379
+  selector:
+    app: etcd
+
+---
+
+apiVersion: v1
+kind: Pod
+metadata:
+  labels:
+    app: etcd
+    etcd_node: master-base
+  name: master-base
+spec:
+  containers:
+  - command:
+    - /usr/local/bin/etcd
+    - --name
+    - master-base
+    - --initial-advertise-peer-urls
+    - http://master-base:2380
+    - --listen-peer-urls
+    - http://0.0.0.0:2380
+    - --listen-client-urls
+    - http://0.0.0.0:2379
+    - --advertise-client-urls
+    - http://master-base:2379
+    - --initial-cluster
+    - master-base=http://master-base:2380,master-slave=http://master-slave:2380
+    - --initial-cluster-state
+    - new
+    image: quay.io/coreos/etcd:latest
+    name: master-base
+    ports:
+    - containerPort: 2379
+      name: client
+      protocol: TCP
+    - containerPort: 2380
+      name: server
+      protocol: TCP
+  restartPolicy: Always
+
+---
+
+apiVersion: v1
+kind: Service
+metadata:
+  labels:
+    etcd_node: master-base
+  name: master-base
+spec:
+  ports:
+  - name: client
+    port: 2379
+    protocol: TCP
+    targetPort: 2379
+  - name: server
+    port: 2380
+    protocol: TCP
+    targetPort: 2380
+  selector:
+    etcd_node: master-base
+
+---
+
+apiVersion: v1
+kind: Pod
+metadata:
+  labels:
+    app: etcd
+    etcd_node: master-slave
+  name: master-slave
+spec:
+  containers:
+  - command:
+    - /usr/local/bin/etcd
+    - --name
+    - master-slave
+    - --initial-advertise-peer-urls
+    - http://master-slave:2380
+    - --listen-peer-urls
+    - http://0.0.0.0:2380
+    - --listen-client-urls
+    - http://0.0.0.0:2379
+    - --advertise-client-urls
+    - http://master-slave:2379
+    - --initial-cluster
+    - master-base=http://master-base:2380,master-slave=http://master-slave:2380
+    - --initial-cluster-state
+    - new
+    image: quay.io/coreos/etcd:latest
+    name: master-base
+    ports:
+    - containerPort: 2379
+      name: client
+      protocol: TCP
+    - containerPort: 2380
+      name: server
+      protocol: TCP
+  restartPolicy: Always
+
+---
+
+apiVersion: v1
+kind: Service
+metadata:
+  labels:
+    etcd_node: master-slave
+  name: master-slave
+spec:
+  ports:
+  - name: client
+    port: 2379
+    protocol: TCP
+    targetPort: 2379
+  - name: server
+    port: 2380
+    protocol: TCP
+    targetPort: 2380
+  selector:
+    etcd_node: master-slave

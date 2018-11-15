@@ -1,0 +1,18 @@
+
+192.168.56.103 - masterbase
+192.168.56.104 - masterslave
+
+cat ~/.ssh/id_rsa.pub | ssh root@192.168.0.100 'cat >> .ssh/igor_rsa.pub && echo "Key copied"'
+
+kubeadm init
+cp -r /etc/kubernetes/pki ~
+kubeadm reset
+cp -r ~/pki/* /etc/kubernetes/pki
+rm /etc/kubernetes/pki/front-proxy-ca.key
+kubeadm init
+
+kubeadm join 10.0.2.15:6443 --token warq4b.ws2r45900eprezwe --discovery-token-ca-cert-hash sha256:073ffa6cd83793c4d21869882e02f9d5c06d8cacdeb2672d3ddff45c3e68cc8f
+
+
+
+1033103

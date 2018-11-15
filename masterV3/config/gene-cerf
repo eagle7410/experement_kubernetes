@@ -1,0 +1,22 @@
+kubeadm alpha phase certs etcd-server --config=/home/igor-master/cnfs/slave.yml
+kubeadm alpha phase certs etcd-peer --config=/home/igor-master/cnfs/slave.yml
+kubeadm alpha phase certs etcd-healthcheck-client --config=/home/igor-master/cnfs/slave.yml
+kubeadm alpha phase certs apiserver-etcd-client --config=/home/igor-master/cnfs/slave.yml
+
+kubeadm alpha phase certs etcd-server --config=/home/igor-master/cnfs/master.yml
+kubeadm alpha phase certs etcd-peer --config=/home/igor-master/cnfs/master.yml
+kubeadm alpha phase certs etcd-healthcheck-client --config=/home/igor-master/cnfs/master.yml
+kubeadm alpha phase certs apiserver-etcd-client --config=/home/igor-master/cnfs/master.yml
+
+@souurce
+https://kubernetes.io/docs/setup/independent/setup-ha-etcd-with-kubeadm/#before-you-begin
+
+kubeadm alpha phase etcd local --config=/home/igor-master/cnfs/master.yml
+
+docker run --rm -it \
+--net host \
+-v /etc/kubernetes:/etc/kubernetes quay.io/coreos/etcd:v3.2.18 etcdctl \
+--cert-file /etc/kubernetes/pki/etcd/peer.crt \
+--key-file /etc/kubernetes/pki/etcd/peer.key \
+--ca-file /etc/kubernetes/pki/etcd/ca.crt \
+--endpoints http://192.168.0.103:2379 cluster-health

@@ -1,0 +1,7 @@
+192.168.0.103 - master1 base
+192.168.0.105 - master2
+
+cat ~/.ssh/id_rsa.pub | ssh root@192.168.0.100 'cat >> .ssh/igor_rsa.pub && echo "Key copied"'
+
+
+kubeadm join 192.168.0.101:6443 --token 0zvfaa.86nypi7egmfqoq1q --discovery-token-ca-cert-hash sha256:0b299f5968b032eaa3a05f6f8316b9aacce77c5599f57583f21d089c04141d25

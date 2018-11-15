@@ -1,0 +1,23 @@
+apiVersion: kubeadm.k8s.io/v1alpha3
+kind: ClusterConfiguration
+kubernetesVersion: stable
+apiServerCertSANs:
+- "192.168.0.103"
+controlPlaneEndpoint: "192.168.0.103:3001"
+etcd:
+  local:
+    extraArgs:
+      listen-client-urls: "https://127.0.0.1:2379,https://192.168.0.103:2379"
+      advertise-client-urls: "https://192.168.0.103:2379"
+      listen-peer-urls: "https://192.168.0.103:2380"
+      initial-advertise-peer-urls: "https://192.168.0.103:2380"
+      initial-cluster: "CP0_HOSTNAME=https://192.168.0.103:2380"
+    serverCertSANs:
+      - master1
+      - 192.168.0.103
+    peerCertSANs:
+      - master1
+      - 192.168.0.103
+networking:
+    # This CIDR is a Calico default. Substitute or remove for your CNI provider.
+    podSubnet: "192.168.0.0/16"
